@@ -3,8 +3,7 @@ function MediaSessionHandler() {
 	audio_element.src = "assets/silence.mp3";
 
 	function _cassetteVisible() {
-		console.log(elements.playing_container.style.opacity);
-		return (elements.playing_container.style.opacity === "1");
+		return (elements.container.style.display !== "none" && elements.playing_container.style.opacity === "1");
 	}
 
 	this.pause = () => {
@@ -21,10 +20,12 @@ function MediaSessionHandler() {
 				title: title,
 				artist: metadata["ARTIST"],
 				album: metadata["ALBUM"],
-				//artwork: [{src: "podcast.jpg"}]
+				artwork: [{src: "assets/icon.svg"}]
 			};
 
 			navigator.mediaSession.metadata = new MediaMetadata(media_metadata);
+			navigator.mediaSession.setPositionState({duration: 0});
+
 			navigator.mediaSession.setActionHandler("play",         () => { if(_cassetteVisible()) {buttonPlay(); this.play()} });
 			navigator.mediaSession.setActionHandler("pause",        () => { if(_cassetteVisible()) {buttonStop(); this.pause()} });
 			navigator.mediaSession.setActionHandler("stop",         () => { if(_cassetteVisible()) {buttonStop(); this.pause()} });
@@ -32,14 +33,15 @@ function MediaSessionHandler() {
 			navigator.mediaSession.setActionHandler("seekbackward", () => { if(_cassetteVisible()) buttonPlaySpeed(-0.1) });
 
 			audio_element.loop = true;
+			audio_element.playbackRate = 10.0;
 			audio_element.play();
 		}
 	}
 
 	this.remove = () => {
-		audio_element.pause();
+		this.pause();
 		audio_element.loop = false;
-		audio_element.currentTime = audio_element.duration+1;
+		//audio_element.currentTime = audio_element.duration-1; //for some reason this now resets to 0 regardless
 		audio_element.play();
 	}
 }
