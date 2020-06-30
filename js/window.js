@@ -96,6 +96,7 @@ async function loadCassette(title, url) {
 		if(metadata.TITLE) info += `- Title: ${metadata.TITLE}\n`;
 		if(metadata.ARTIST) info += `- Artist: ${metadata.ARTIST}\n`;
 		if(metadata.ALBUM) info += `- Album: ${metadata.ALBUM}\n`;
+		if(metadata.SOURCE) info += `- Source: ${metadata.SOURCE}\n`;
 		console.log(info);
 	})();
 
