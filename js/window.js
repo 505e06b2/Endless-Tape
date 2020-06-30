@@ -2,10 +2,15 @@
 const audio_folder = "audio";
 const default_volume = 30; //percent
 const audio = new Audio();
-let noise = new Audio();
+const noise = new Audio();
+const media_session = new MediaSessionHandler();
 
-let cassette = null;
-let shelf = null;
+const elements = {
+	shelf: null,
+	container: null,
+	playing_container: null,
+	cassette: null,
+};
 
 function getAbsoluteURL(url) {
 	const a = document.createElement("a");
@@ -26,11 +31,11 @@ async function setCassetteAssets(metadata) {
 	return metadata;
 }
 
-async function loadCassette(url) {
-	document.getElementById("playing-container").style.opacity = "0.0";
-	document.getElementById("shelf").style.opacity = "0.0";
-	document.getElementById("shelf").style.display = "none";
-	document.getElementById("container").style.display = "";
+async function loadCassette(title, url) {
+	elements.playing_container.style.opacity = "0.0";
+	elements.shelf.style.opacity = "0.0";
+	elements.shelf.style.display = "none";
+	elements.container.style.display = "";
 
 	const messages = {
 		"parent": document.getElementById("messages"),
@@ -98,17 +103,21 @@ async function loadCassette(url) {
 	const audio_buffer = await decodes["audio"];
 
 	messages.parent.style.display = "";
-	document.getElementById("playing-container").style.opacity = "1.0"; //opacity and not display, so that the images can preload a bit
+	elements.playing_container.style.opacity = "1.0"; //opacity and not display, so that the images can preload a bit
 	audio.changeTrack(audio_buffer);
 
 	await buttonVolume(default_volume);
 	document.getElementById("volume").value = default_volume;
 	await buttonPlay();
+
+	media_session.add(title, metadata);
 }
 
 window.onload = async () => {
-	cassette = document.getElementById("cassette");
-	shelf = document.getElementById("shelf");
+	elements.shelf = document.getElementById("shelf");
+	elements.container = document.getElementById("container");
+	elements.playing_container = document.getElementById("playing-container");
+	elements.cassette = document.getElementById("cassette");
 
 	try {
 		noise.load(await (await fetch("assets/noise.ogg")).arrayBuffer());

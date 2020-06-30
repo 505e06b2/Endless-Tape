@@ -1,6 +1,5 @@
 let speedup_interval = null;
 
-
 function _increaseRate(current_rate, end_rate) {
 	const step = 0.01 * ((current_rate > end_rate) ? -1 : 1);
 
@@ -32,6 +31,7 @@ async function buttonPlay() {
 	_increaseRate(0.1, 1.0);
 	await noise.resume();
 	await audio.resume();
+	media_session.s
 }
 
 async function buttonStop() {
@@ -68,7 +68,8 @@ async function buttonVolume(value) {
 
 async function buttonEject() {
 	await buttonStop();
-	document.getElementById("container").style.display = "none";
-	shelf.style.display = "";
-	setTimeout(() => {shelf.style.opacity = "1.0";}, 0); //so the opacity transitions
+	media_session.remove();
+	elements.container.style.display = "none";
+	elements.shelf.style.display = "";
+	setTimeout(() => {elements.shelf.style.opacity = "1.0";}, 0); //so the opacity transitions
 }

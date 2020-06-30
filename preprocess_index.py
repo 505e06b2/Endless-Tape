@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 audio_folder = "audio/"
-cassette_line = """<div class="case" title="%s" onclick="loadCassette('%s')"></div>\n"""
+cassette_line = """<div class="case" title="%s" onclick="loadCassette(this.title, '%s')"></div>\n"""
 
 import os
 import urllib.parse
