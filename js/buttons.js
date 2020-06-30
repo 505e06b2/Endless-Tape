@@ -29,7 +29,7 @@ async function buttonPlay() {
 	cassette.style.animationPlayState = "running";
 	media_session.play();
 
-	_increaseRate(0.1, 1.0);
+	_increaseRate(0.0, 1.0);
 	await noise.resume();
 	await audio.resume();
 	media_session.s
@@ -58,7 +58,6 @@ async function buttonPlaySpeed(amount) {
 	else if(requested > 1.5) requested = 1.5;
 
 	_increaseRate(audio.rate.get(), requested);
-	//audio.rate.set(requested);
 	//cassette.style.animationDuration = `${default_animation_time/requested}s`; //Jutters really bad - not used anymore at all
 }
 
