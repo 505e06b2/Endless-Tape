@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<meta charset="utf8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Endless Tape</title>
+		<link rel="stylesheet" href="css/range_slider.css">
+		<link rel="stylesheet" href="css/playing.css">
+		<link rel="stylesheet" href="css/shelf.css">
+		<link rel="stylesheet" href="css/style.css">
+		<script src="js/audio.js"></script>
+		<script src="js/parse_ogg.js"></script>
+		<script src="js/window.js"></script>
+		<script src="js/buttons.js"></script>
+	</head>
+	<body>
+		<div id="shelf">
+			${CASSETTES}
+		</div>
+		<div id="container" class="square" style="display: none">
+			<div id="messages">
+				<div id="percent">HMM</div>
+				<div id="description"></div>
+			</div>
+			<div id="playing-container">
+				<div class="bar">
+					<div class="button small" onclick="buttonEject()"><img src="assets/icons/eject.svg"></div>
+					<div id="button_play" class="button" onmousedown="buttonPlay()"><img src="assets/icons/play.svg"></div>
+					<div class="button" onmousedown="buttonStop()"><img src="assets/icons/stop.svg"></div>
+				</div>
+				<div id="cassette">
+					<div class="label"></div>
+				</div>
+				<div class="bar bottom">
+					<div class="big"><input id="volume" type="range" max="130" min="0" step="1" value="20" oninput="buttonVolume(this.value)"></div>
+					<div class="button small" onmousedown="buttonPlaySpeed(-0.1)"><img src="assets/icons/slow.svg"></div>
+					<div class="button small" onmousedown="buttonPlaySpeed(+0.1)"><img src="assets/icons/fast.svg"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,181 @@
+:root { /*Defaults*/
+	--tiled-bg: #000; /*url("../assets/defaults/cassette_bg.png");*/
+	--label-bg: #aaa; /*url("../assets/defaults/cassette_label.svg");*/
+}
+
+#playing-container {
+	position: absolute;
+	left: 25%;
+	top: 25%;
+	bottom: 25%;
+	right: 25%;
+	opacity: 0;
+	transition: opacity 2s linear;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+@keyframes cassette_scroll {
+	0%    {background-position: 0vmin 0vmin;}
+	100%  {background-position: 100vmin 100vmin;}
+}
+
+#playing-container #cassette {
+	height: 70%;
+	width: 100%;
+
+	background: var(--tiled-bg);
+	-webkit-mask-image: url("../assets/masks/cassette_mask.svg");
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	-webkit-mask-size: contain;
+
+	mask-image: url("../assets/masks/cassette_mask.svg");
+	mask-repeat: no-repeat;
+	mask-position: center;
+	mask-size: contain;
+
+	background-size: 100vmin 100vmin;
+	animation: cassette_scroll 10s linear infinite;
+}
+
+#playing-container #cassette .label {
+	content: "";
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+
+	background: var(--label-bg);
+	background-size: 100% 100%;
+	-webkit-mask-image: url("../assets/masks/cassette_label_mask.svg");
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	-webkit-mask-size: contain;
+
+	mask-image: url("../assets/masks/cassette_label_mask.svg");
+	mask-repeat: no-repeat;
+	mask-position: center;
+	mask-size: contain;
+}
+
+#playing-container .bar {
+	position: relative;
+	padding: 5px;
+	text-align: center;
+	display: flex;
+	width: 100%;
+	height: 15%;
+}
+
+#playing-container .bar > div:first-child {
+	margin-left: 0px;
+}
+
+#playing-container .bar > div:last-child {
+	margin-right: 0px;
+}
+
+#playing-container .bar > div {
+	position: relative;
+	height: 100%;
+	user-select: none;
+	background: var(--bg-alt-colour);
+	box-sizing: border-box;
+	margin-left: 1%;
+	margin-right: 1%;
+
+	/* If this isn't here, Firefox ruins everything */
+	min-height: 0px;
+	min-width: 0px;
+}
+
+#playing-container .bar .button {
+	position: relative;
+	cursor: pointer;
+	flex: 2;
+}
+
+#playing-container .bar #volume {
+	height: 100%;
+	width: 100%;
+}
+
+#playing-container .bar .button.pressed,
+#playing-container .bar:not(.bottom) .button:active {
+	transform: translateY(10%);
+	height: 90%;
+}
+
+#playing-container .bar.bottom .button:active {
+	transform: none;
+	height: 90%;
+}
+
+#playing-container .bar .button.pressed::after,
+#playing-container .bar:not(.bottom) .button:active::after {
+	content: "";
+	position: absolute;
+	top: 95%;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background: #666;
+}
+
+#playing-container .bar.bottom .button:active::after {
+	content: "";
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 95%;
+	background: #666;
+}
+
+#playing-container .bar div::after {
+	content: "";
+	position: absolute;
+	top: 90%;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background: var(--fg-colour);
+}
+
+#playing-container .bar.bottom > div::after {
+	content: "";
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 90%;
+	background: var(--fg-colour);
+}
+
+#playing-container .bar > div {
+	flex: 2;
+}
+
+#playing-container .bar .big {
+	flex: 3;
+}
+
+#playing-container .bar .small { /*Both top and bottom bars*/
+	flex: 1;
+}
+
+#playing-container .bar img {
+	height: 100%;
+	filter: brightness(60%); /*60% = #999*/
+
+	-webkit-user-drag: none;
+	-khtml-user-drag: none;
+	-moz-user-drag: none;
+	-o-user-drag: none;
+	user-drag: none;
+}

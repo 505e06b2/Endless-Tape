@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="600mm"
+   height="400mm"
+   viewBox="0 0 600 400"
+   version="1.1"
+   id="svg6186"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="cassette_label_mask.svg">
+  <defs
+     id="defs6180" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.24748737"
+     inkscape:cx="1243.1019"
+     inkscape:cy="863.50156"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:pagecheckerboard="true"
+     borderlayer="true"
+     inkscape:showpageshadow="false"
+     inkscape:window-width="1366"
+     inkscape:window-height="731"
+     inkscape:window-x="0"
+     inkscape:window-y="18"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata6183">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,103)"
+     style="display:inline">
+    <path
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke-width:0.99244744;paint-order:stroke markers fill"
+       d="M 191.50781 117.58398 L 110.30469 196.5918 L 110.30469 1112.5645 L 2145.1641 1112.5645 L 2145.1641 214.92188 L 2047.8262 117.58398 L 191.50781 117.58398 z M 648.51758 477.41406 L 1594.0215 477.41406 C 1698.1116 477.41406 1781.9082 561.21258 1781.9082 665.30273 C 1781.9082 769.39289 1698.1116 853.19141 1594.0215 853.19141 L 648.51758 853.19141 C 544.42742 853.19141 460.62891 769.39289 460.62891 665.30273 C 460.62891 561.21258 544.42742 477.41406 648.51758 477.41406 z "
+       transform="matrix(0.26458333,0,0,0.26458333,0,-103)"
+       id="rect6234" />
+  </g>
+</svg>

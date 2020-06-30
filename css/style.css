@@ -1,0 +1,57 @@
+:root {
+	--bg-alt-colour: #222;
+	--bg-colour: #333;
+	--fg-alt-colour: #aaa;
+	--fg-colour: #999;
+}
+
+body {
+	background: var(--bg-colour);
+	color: var(--fg-colour);
+	margin: 0px;
+	padding: 0px;
+	overflow: scroll-y;
+	height: 100%;
+	width: 100%;
+}
+
+.square {
+	position: absolute;
+	width: 50%;
+	padding-bottom: 50%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+@media screen and (orientation:portrait) {
+	.square {
+		width: 100%;
+		padding-bottom: 100%;
+	}
+}
+
+#messages {
+	display: none;
+	flex-direction: column;
+	font-size: 4vmin;
+	position: absolute;
+	left: 25%;
+	top: 25%;
+	bottom: 25%;
+	right: 25%;
+	font-family: sans-serif;
+
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+}
+
+#messages #percent {
+	font-weight: bold;
+	font-size: 8vmin;
+}
+
+#messages #description {
+	font-size: 4vmin;
+}

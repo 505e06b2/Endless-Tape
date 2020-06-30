@@ -1,0 +1,40 @@
+input[type=range] {
+	cursor: pointer;
+	-webkit-appearance: none;  /* Override default CSS styles */
+	appearance: none;
+	outline: none;
+	background: none;
+	height: 100%;
+	width: 100%;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+	margin-right: 5%;
+	margin-left: 5%;
+	height: 10%;
+	background: #666;
+}
+
+input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 10%;
+	height: 100%;
+	background: var(--fg-colour);
+}
+
+input[type=range]::-moz-range-track {
+	appearance: none;
+	margin-right: 5%;
+	margin-left: 5%;
+	height: 10%;
+	background: #666;
+}
+
+input[type=range]::-moz-range-thumb {
+	width: 10%;
+	height: 10%;
+	border: none;
+	border-radius: 0px;
+	background: var(--fg-colour);
+}
