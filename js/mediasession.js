@@ -7,15 +7,11 @@ function MediaSessionHandler() {
 		return (elements.playing_container.style.opacity === "1");
 	}
 
-	function _pause() {
-		if(!_cassetteVisible()) return;
-		buttonStop();
+	this.pause = () => {
 		audio_element.pause();
 	}
 
-	function _play() {
-		if(!_cassetteVisible()) return;
-		buttonPlay();
+	this.play = () => {
 		audio_element.play();
 	}
 
@@ -29,9 +25,9 @@ function MediaSessionHandler() {
 			};
 
 			navigator.mediaSession.metadata = new MediaMetadata(media_metadata);
-			navigator.mediaSession.setActionHandler("play",         _play);
-			navigator.mediaSession.setActionHandler("pause",        _pause);
-			navigator.mediaSession.setActionHandler("stop",         _pause);
+			navigator.mediaSession.setActionHandler("play",         () => { if(_cassetteVisible()) {buttonPlay(); this.play()} });
+			navigator.mediaSession.setActionHandler("pause",        () => { if(_cassetteVisible()) {buttonStop(); this.pause()} });
+			navigator.mediaSession.setActionHandler("stop",         () => { if(_cassetteVisible()) {buttonStop(); this.pause()} });
 			navigator.mediaSession.setActionHandler("seekforward",  () => { if(_cassetteVisible()) buttonPlaySpeed(+0.1) });
 			navigator.mediaSession.setActionHandler("seekbackward", () => { if(_cassetteVisible()) buttonPlaySpeed(-0.1) });
 

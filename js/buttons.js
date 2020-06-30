@@ -27,6 +27,7 @@ async function buttonPlay() {
 
 	button_classes.add("pressed");
 	cassette.style.animationPlayState = "running";
+	media_session.play();
 
 	_increaseRate(0.1, 1.0);
 	await noise.resume();
@@ -45,6 +46,7 @@ async function buttonStop() {
 	}
 
 	document.getElementById("button_play").classList.remove("pressed");
+	media_session.pause();
 	audio.rate.set(1.0);
 }
 
