@@ -8,10 +8,12 @@ import urllib.parse
 from tinytag import TinyTag #pythno3 -m pip install tinytag
 current_path = os.path.dirname(os.path.realpath(__file__))
 
-
 out = ""
 
-for x in sorted(os.listdir( os.path.join(current_path, audio_folder) )):
+for x in sorted(os.listdir( os.path.join(current_path, audio_folder) ), key=lambda v: v.upper()):
+	if not x.endswith(".ogg"):
+		continue
+
 	file_path = os.path.join(current_path, audio_folder, x)
 	url = urllib.parse.urljoin(audio_folder, x)
 

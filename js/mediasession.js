@@ -20,7 +20,11 @@ function MediaSessionHandler() {
 				title: title,
 				artist: metadata["ARTIST"],
 				album: metadata["ALBUM"],
-				artwork: [{src: "assets/icon.svg"}]
+				artwork: [
+					//{src: `url('${metadata["CASSETTE_BG"]}')`}, //Doen't seem to work with base64
+					{src: "assets/icon.svg"},
+					{src: "assets/icon.png"},
+				]
 			};
 
 			navigator.mediaSession.metadata = new MediaMetadata(media_metadata);

@@ -24,8 +24,8 @@ async function setCassetteAssets(metadata) {
 	}
 
 	let style = "";
-	if(checkTag(metadata.CASSETTE_BG))    style += `--tiled-bg: url("${metadata.CASSETTE_BG}");`;
-	if(checkTag(metadata.CASSETTE_LABEL)) style += `--label-bg: url("${metadata.CASSETTE_LABEL}");`;
+	if(checkTag(metadata.CASSETTE_BG))    style += `--tiled-bg:url("${metadata.CASSETTE_BG}");`;
+	if(checkTag(metadata.CASSETTE_LABEL)) style += `--label-bg:url("${metadata.CASSETTE_LABEL}");`;
 	cassette.style = style;
 
 	return metadata;
@@ -93,9 +93,9 @@ async function loadCassette(title, url) {
 
 	(async () => {
 		let info = `==== Metadata ====\n${getAbsoluteURL(url)}:\n`;
-		if(metadata.TITLE) info += `- Title: ${metadata.TITLE}\n`;
+		if(metadata.TITLE) info +=  `- Title:  ${metadata.TITLE}\n`;
 		if(metadata.ARTIST) info += `- Artist: ${metadata.ARTIST}\n`;
-		if(metadata.ALBUM) info += `- Album: ${metadata.ALBUM}\n`;
+		if(metadata.ALBUM) info +=  `- Album:  ${metadata.ALBUM}\n`;
 		if(metadata.SOURCE) info += `- Source: ${metadata.SOURCE}\n`;
 		console.log(info);
 	})();
@@ -133,7 +133,7 @@ window.onload = async () => {
 		try {
 			await navigator.serviceWorker.register("service_worker.js");
 		} catch {
-			//console.warn("Service worker was not loaded");
+			console.warn("Service worker was not loaded");
 		}
 	}
 };
