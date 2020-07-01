@@ -1,6 +1,6 @@
 :root { /*Defaults*/
-	--tiled-bg: #000; /*url("../assets/defaults/cassette_bg.png");*/
-	--label-bg: #aaa; /*url("../assets/defaults/cassette_label.svg");*/
+	--tiled-bg: #fff; /*url("../assets/defaults/cassette_bg.png");*/
+	--label-bg: #333; /*url("../assets/defaults/cassette_label.svg");*/
 }
 
 #playing-container {

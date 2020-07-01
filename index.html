@@ -2,14 +2,17 @@
 	<head>
 		<meta charset="utf8">
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link rel="manifest" href="manifest.webmanifest">
 
 		<title>Endless Tape</title>
 		<link rel="icon" type="image/svg+xml" href="assets/icon.svg">
 		<link rel="icon" type="image/png" href="assets/icon.png">
+
 		<link rel="stylesheet" href="css/range_slider.css">
 		<link rel="stylesheet" href="css/playing.css">
 		<link rel="stylesheet" href="css/shelf.css">
 		<link rel="stylesheet" href="css/style.css">
+
 		<script defer src="js/mediasession.js"></script>
 		<script defer src="js/audio.js"></script>
 		<script defer src="js/parse_ogg.js"></script>
@@ -17,7 +20,8 @@
 		<script defer src="js/window.js"></script>
 	</head>
 	<body>
-		<div id="shelf">
+		<!-- Have these style attributes here so that the page will look correct without the CSS being fully parsed -->
+		<div id="shelf" style="opacity: 0">
 			<div class="case" title="Eternity" onclick="loadCassette(this.title, 'audio/eternity.ogg')"></div>
 <div class="case" title="Goodbye To A World" onclick="loadCassette(this.title, 'audio/goodbye_to_a_world.ogg')"></div>
 <div class="case" title="My Love Is A Stapler" onclick="loadCassette(this.title, 'audio/love_is_a_stapler.ogg')"></div>

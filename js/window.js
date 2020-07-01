@@ -128,4 +128,12 @@ window.onload = async () => {
 	}
 
 	shelf.style.opacity = "1.0";
+
+	if("serviceWorker" in navigator) {
+		try {
+			await navigator.serviceWorker.register("service_worker.js");
+		} catch {
+			//console.warn("Service worker was not loaded");
+		}
+	}
 };

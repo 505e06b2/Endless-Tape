@@ -33,7 +33,7 @@ function MediaSessionHandler() {
 			navigator.mediaSession.setActionHandler("seekbackward", () => { if(_cassetteVisible()) buttonPlaySpeed(-0.1) });
 
 			audio_element.loop = true;
-			audio_element.playbackRate = 10.0;
+			audio_element.playbackRate = 10.0; //max of 1s before it ends
 			audio_element.play();
 		}
 	}
