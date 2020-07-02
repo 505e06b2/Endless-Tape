@@ -4,7 +4,7 @@
 	padding: 1vmin;
 
 	grid-gap: 1vmin 1vmin;
-	grid-template-columns: repeat(4, auto);
+	grid-template-columns: repeat(6, auto);
 	opacity: 0;
 	transition: opacity 0.5s linear;
 }
@@ -46,6 +46,10 @@
 }
 
 @media screen and (orientation:portrait) {
+	#shelf {
+		grid-template-columns: repeat(4, auto);
+	}
+
 	#shelf > .case {
 		border-bottom: none;
 		border-left: 1vh solid var(--fg-colour);
