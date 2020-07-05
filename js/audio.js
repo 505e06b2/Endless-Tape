@@ -11,11 +11,11 @@ function Audio() {
 	node_bass_boost.connect(node_treble_dampen);
 	audio.suspend();
 
-	node_treble_dampen.type = "highshelf";
+	node_treble_dampen.type = "highshelf"; //lower treble to simulate tapes a bit more
 	node_treble_dampen.frequency.value = 10000;
 	node_treble_dampen.gain.value = -12;
 
-	node_bass_boost.type = "highshelf";
+	node_bass_boost.type = "highshelf"; //bass boost by lowering treble
 	node_bass_boost.frequency.value = 200;
 	node_bass_boost.gain.value = -6;
 
