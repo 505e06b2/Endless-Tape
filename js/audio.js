@@ -5,24 +5,26 @@ function Audio() {
 	const node_gain = audio.createGain();
 	const node_bass_boost = audio.createBiquadFilter();
 	const node_treble_dampen = audio.createBiquadFilter();
+	const node_lowpass = audio.createBiquadFilter();
 
 	node_gain.connect(audio.destination);
 	node_treble_dampen.connect(node_gain)
 	node_bass_boost.connect(node_treble_dampen);
 	audio.suspend();
 
-	node_treble_dampen.type = "highshelf"; //lower treble to simulate tapes a bit more
+	node_treble_dampen.type = "lowpass"; //lower treble to simulate tapes a bit more
 	node_treble_dampen.frequency.value = 10000;
-	node_treble_dampen.gain.value = -12;
+	node_treble_dampen.Q.value = 0.1;
 
-	node_bass_boost.type = "highshelf"; //bass boost by lowering treble
-	node_bass_boost.frequency.value = 200;
-	node_bass_boost.gain.value = -6;
+	node_bass_boost.type = "highshelf";
+	node_bass_boost.frequency.value = 6000;
+	node_bass_boost.gain.value = -12;
 
 	let buffer_source;
 
 	this.decodeFile = async (file) => {
 		return await audio.decodeAudioData(file, function(buffer) {
+
 			return buffer;
 		}, function(e) {
 			console.log(e.toString());

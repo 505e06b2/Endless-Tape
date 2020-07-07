@@ -10,7 +10,7 @@ body {
 	color: var(--fg-colour);
 	margin: 0px;
 	padding: 0px;
-	overflow: scroll-y;
+	overflow: auto;
 	height: 100%;
 	width: 100%;
 }
