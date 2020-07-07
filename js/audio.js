@@ -15,7 +15,7 @@ function Audio() {
 	node_treble_dampen.type = "peaking";
 	node_treble_dampen.frequency.value = 10000;
 	node_treble_dampen.Q.value = 1.7;
-	node_treble_dampen.gain.value = -24;
+	node_treble_dampen.gain.value = -12;
 
 	node_bass_boost.type = "highshelf"; //bass boost
 	node_bass_boost.frequency.value = 6000;
