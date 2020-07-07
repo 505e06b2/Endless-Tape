@@ -12,11 +12,12 @@ function Audio() {
 	node_bass_boost.connect(node_treble_dampen);
 	audio.suspend();
 
-	node_treble_dampen.type = "lowpass"; //lower treble to simulate tapes a bit more
+	node_treble_dampen.type = "peaking";
 	node_treble_dampen.frequency.value = 10000;
-	node_treble_dampen.Q.value = 0.1;
+	node_treble_dampen.Q.value = 1.7;
+	node_treble_dampen.gain.value = -24;
 
-	node_bass_boost.type = "highshelf";
+	node_bass_boost.type = "highshelf"; //bass boost
 	node_bass_boost.frequency.value = 6000;
 	node_bass_boost.gain.value = -12;
 
@@ -24,7 +25,6 @@ function Audio() {
 
 	this.decodeFile = async (file) => {
 		return await audio.decodeAudioData(file, function(buffer) {
-
 			return buffer;
 		}, function(e) {
 			console.log(e.toString());
