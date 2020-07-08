@@ -4,22 +4,26 @@ function Audio() {
 	const audio = new AudioContext();
 	const node_gain = audio.createGain();
 	const node_bass_boost = audio.createBiquadFilter();
-	const node_treble_dampen = audio.createBiquadFilter();
+	const node_treble_boost = audio.createBiquadFilter();
 	const node_lowpass = audio.createBiquadFilter();
 
 	node_gain.connect(audio.destination);
-	node_treble_dampen.connect(node_gain)
-	node_bass_boost.connect(node_treble_dampen);
+	node_treble_boost.connect(node_gain)
+	node_bass_boost.connect(node_treble_boost);
+	node_lowpass.connect(node_bass_boost);
 	audio.suspend();
 
-	node_treble_dampen.type = "peaking";
-	node_treble_dampen.frequency.value = 10000;
-	node_treble_dampen.Q.value = 1.7;
-	node_treble_dampen.gain.value = -12;
+	node_treble_boost.type = "highshelf";
+	node_treble_boost.frequency.value = 5000;
+	node_treble_boost.gain.value = 32;
 
-	node_bass_boost.type = "highshelf"; //bass boost
-	node_bass_boost.frequency.value = 6000;
+	node_bass_boost.type = "highshelf";
+	node_bass_boost.frequency.value = 300;
 	node_bass_boost.gain.value = -12;
+
+	node_lowpass.type = "lowpass"; //cassettify
+	node_lowpass.frequency.value = 4000;
+	node_lowpass.Q.value = -5;
 
 	let buffer_source;
 
@@ -42,7 +46,7 @@ function Audio() {
 		buffer_source = audio.createBufferSource();
 		buffer_source.buffer = buffer;
 
-		buffer_source.connect(node_bass_boost);
+		buffer_source.connect(node_lowpass);
 		buffer_source.loop = true;
 		buffer_source.start(0, startTime);
 	}
