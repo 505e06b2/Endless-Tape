@@ -4,7 +4,12 @@ function OggParser(file) {
 	const uint8 = new Uint8Array(file);
 
 	this.getMetadata = () => {
-		return _parseMetadataSegments( _getMetadataSegments() );
+		try {
+			return _parseMetadataSegments( _getMetadataSegments() );
+		} catch(e) {
+			console.error(e);
+			return {};
+		}
 	};
 
 	this.parsePage = (starting_index) => {

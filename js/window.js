@@ -10,6 +10,7 @@ const elements = {
 	container: null,
 	playing_container: null,
 	cassette: null,
+	messages: {}
 };
 
 function getAbsoluteURL(url) {
@@ -31,24 +32,44 @@ async function setCassetteAssets(metadata) {
 	return metadata;
 }
 
-async function loadCassette(title, url) {
+async function preloadCassette(text) {
 	elements.playing_container.style.opacity = "0.0";
 	elements.shelf.style.opacity = "0.0";
 	elements.shelf.style.display = "none";
 	elements.container.style.display = "";
 
-	const messages = {
-		"parent": document.getElementById("messages"),
-		"percent": document.getElementById("percent"),
-		"description": document.getElementById("description")
+	elements.messages.percent.innerText = "0%";
+	elements.messages.description.innerText = text;
+	elements.messages.parent.style.display = "flex";
+}
+
+async function loadCustomCassette() {
+	const input_elem = document.createElement("input");
+	input_elem.type = "file";
+	input_elem.accept = ".wav,.mp3,.ogg,.webm,.flac";
+	input_elem.onchange = async () => {
+		await preloadCassette("Loading");
+
+		const reader = new FileReader();
+		reader.addEventListener("load", async (event) => {
+			try {
+				await loadCassetteFinish("Custom", "[CUSTOM]", event.target.result);
+			} catch(e) {
+				console.error(e);
+				buttonEject();
+			}
+		});
+		reader.addEventListener("progress", async (event) => {
+			elements.messages.percent.innerText = `${Math.trunc(event.loaded/event.total*95)}%`;
+		});
+		reader.readAsArrayBuffer(input_elem.files[0]);
 	};
+	input_elem.click();
+}
 
-	messages.percent.innerText = "0%";
-	messages.description.innerText = "Downloading";
-	messages.parent.style.display = "flex";
+async function loadCassette(title, url) {
+	await preloadCassette("Downloading");
 
-
-	messages.description.innerText = "Downloading";
 	const file_contents = await (async () => {
 		const r = await fetch(url);
 		const content_length = r.headers.get("Content-Length");
@@ -65,7 +86,7 @@ async function loadCassette(title, url) {
 
 				chunks.push(value);
 				received_bytes += value.length;
-				messages.percent.innerText = `${Math.trunc(received_bytes/content_length*95)}%`;
+				elements.messages.percent.innerText = `${Math.trunc(received_bytes/content_length*95)}%`;
 			}
 
 			const buffer_array = new Uint8Array(received_bytes);
@@ -82,28 +103,39 @@ async function loadCassette(title, url) {
 		}
 	})();
 
+	try {
+		await loadCassetteFinish(title, url, file_contents);
+	} catch(e) {
+		console.error(e);
+		buttonEject();
+	}
+}
+
+async function loadCassetteFinish(title, url, file_contents) {
 	const decodes = {
 		"metadata": setCassetteAssets( (new OggParser(file_contents)).getMetadata() ),
 		"audio": audio.decodeFile(file_contents)
 	};
 
-	messages.description.innerText = "Parsing Metadata";
+	elements.messages.description.innerText = "Parsing Metadata";
 	const metadata = await decodes["metadata"];
-	messages.percent.innerText = "98%";
+	elements.messages.percent.innerText = "98%";
 
-	(async () => {
-		let info = `==== Metadata ====\n${getAbsoluteURL(url)}:\n`;
-		if(metadata.TITLE) info +=  `- Title:  ${metadata.TITLE}\n`;
-		if(metadata.ARTIST) info += `- Artist: ${metadata.ARTIST}\n`;
-		if(metadata.ALBUM) info +=  `- Album:  ${metadata.ALBUM}\n`;
-		if(metadata.SOURCE) info += `- Source: ${metadata.SOURCE}\n`;
-		console.log(info);
-	})();
+	if(Object.keys(metadata).length) {
+		(async () => {
+			let info = `==== Metadata ====\n${getAbsoluteURL(url)}:\n`;
+			if(metadata.TITLE) info +=  `- Title:  ${metadata.TITLE}\n`;
+			if(metadata.ARTIST) info += `- Artist: ${metadata.ARTIST}\n`;
+			if(metadata.ALBUM) info +=  `- Album:  ${metadata.ALBUM}\n`;
+			if(metadata.SOURCE) info += `- Source: ${metadata.SOURCE}\n`;
+			console.log(info);
+		})();
+	}
 
-	messages.description.innerText = "Parsing Audiobuffer";
+	elements.messages.description.innerText = "Parsing Audiobuffer";
 	const audio_buffer = await decodes["audio"];
 
-	messages.parent.style.display = "";
+	elements.messages.parent.style.display = "";
 	elements.playing_container.style.opacity = "1.0"; //opacity and not display, so that the images can preload a bit
 	audio.changeTrack(audio_buffer);
 
@@ -119,6 +151,12 @@ window.onload = async () => {
 	elements.container = document.getElementById("container");
 	elements.playing_container = document.getElementById("playing-container");
 	elements.cassette = document.getElementById("cassette");
+
+	elements.messages = {
+		"parent": document.getElementById("messages"),
+		"percent": document.getElementById("percent"),
+		"description": document.getElementById("description")
+	};
 
 	try {
 		noise.load(await (await fetch("assets/noise.ogg")).arrayBuffer());

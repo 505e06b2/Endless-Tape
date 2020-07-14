@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 audio_folder = "audio/"
-cassette_line = """<div class="case" title="%s" onclick="loadCassette(this.title, '%s')"></div>\n"""
+cassette_line = """<div class="case" title="%s" artist="%s" onclick="loadCassette(this.title, '%s')"></div>\n"""
 
 import os
 import urllib.parse
@@ -17,11 +17,14 @@ for x in sorted(os.listdir( os.path.join(current_path, audio_folder) ), key=lamb
 	file_path = os.path.join(current_path, audio_folder, x)
 	url = urllib.parse.urljoin(audio_folder, x)
 
-	song_title = TinyTag.get(os.path.join(audio_folder, x)).title
+	tags = TinyTag.get(os.path.join(audio_folder, x))
+	song_title = tags.title
 	if not song_title:
 		song_title = os.path.splitext(x)[0]
 
-	out += cassette_line % (song_title, url)
+	song_artist = tags.artist
+
+	out += cassette_line % (song_title, song_artist, url)
 
 with open(os.path.join(current_path, "index.html"), "w") as o:
 	with open(os.path.join(current_path, "template.html"), "r") as i:
