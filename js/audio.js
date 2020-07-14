@@ -26,8 +26,8 @@ function Audio() {
 	node_lowpass.frequency.value = 4000;
 	node_lowpass.Q.value = -5;
 
+
 	let buffer_source;
-	let audio_element;
 
 	this.decodeFile = async (file) => {
 		return await audio.decodeAudioData(file, function(buffer) {
@@ -43,24 +43,25 @@ function Audio() {
 	}
 
 	this.changeTrack = (buffer_or_url, startTime = 0) => {
-		if(buffer_source) { buffer_source.disconnect(); }
-		if(audio_element) { URL.revokeObjectURL(audio_element.src); }
+		if(buffer_source) {
+			buffer_source.disconnect();
+			if(buffer_source.mediaElement) URL.revokeObjectURL(buffer_source.mediaElement.src);
+		}
 		buffer_source = undefined;
-		audio_element = undefined;
+
 
 		if(typeof(buffer_or_url) === "string") {
-			audio_element = document.createElement("audio");
-			buffer_source = audio.createMediaElementSource(audio_element);
-			audio_element.src = buffer_or_url;
-			audio_element.loop = true;
-			audio_element.play();
+			buffer_source = audio.createMediaElementSource(document.createElement("audio"));
+			buffer_source.mediaElement.src = buffer_or_url;
+			buffer_source.mediaElement.loop = true;
+			buffer_source.mediaElement.preservesPitch = false; //no browser has implemented this
+			buffer_source.mediaElement.play();
 
 		} else {
 			buffer_source = audio.createBufferSource();
 			buffer_source.buffer = buffer_or_url;
 			buffer_source.loop = true;
 			buffer_source.start(0, startTime);
-
 		}
 
 		buffer_source.connect(node_lowpass);
@@ -91,15 +92,24 @@ function Audio() {
 
 	this.rate = {
 		get: () => {
-			if(audio_element) return audio_element.playbackRate;
-			else if(buffer_source) return buffer_source.playbackRate.value;
-			else return 1;
+			if(buffer_source) {
+				if(buffer_source.mediaElement) return buffer_source.mediaElement.playbackRate;
+				return buffer_source.playbackRate.value;
+			}
+			return 1;
 		},
+
 		set: (v) => {
-			if(audio_element) {
-				if(v < 0.1) v = 0.1;
-				audio_element.playbackRate = v;
-			} else if(buffer_source) return buffer_source.playbackRate.value = v;
+			if(buffer_source) {
+				if(buffer_source.mediaElement) {
+					if(v < 0.1) v = 0.1;
+					//node_pitchcorrect.detune.value = 0;
+					return buffer_source.mediaElement.playbackRate = v;
+
+				} else {
+					return buffer_source.playbackRate.value = v;
+				}
+			}
 		}
 	};
 }
