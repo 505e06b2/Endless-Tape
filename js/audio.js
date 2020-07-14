@@ -2,6 +2,7 @@
 
 function Audio() {
 	const audio = new AudioContext();
+
 	const node_gain = audio.createGain();
 	const node_bass_boost = audio.createBiquadFilter();
 	const node_treble_boost = audio.createBiquadFilter();
@@ -26,6 +27,7 @@ function Audio() {
 	node_lowpass.Q.value = -5;
 
 	let buffer_source;
+	let audio_element;
 
 	this.decodeFile = async (file) => {
 		return await audio.decodeAudioData(file, function(buffer) {
@@ -40,15 +42,28 @@ function Audio() {
 		return audio.currentTime; //currentTime is the time from when the AudioContext was created
 	}
 
-	this.changeTrack = (buffer, startTime = 0) => {
-		if(buffer_source) buffer_source.disconnect();
+	this.changeTrack = (buffer_or_url, startTime = 0) => {
+		if(buffer_source) { buffer_source.disconnect(); }
+		if(audio_element) { URL.revokeObjectURL(audio_element.src); }
+		buffer_source = undefined;
+		audio_element = undefined;
 
-		buffer_source = audio.createBufferSource();
-		buffer_source.buffer = buffer;
+		if(typeof(buffer_or_url) === "string") {
+			audio_element = document.createElement("audio");
+			buffer_source = audio.createMediaElementSource(audio_element);
+			audio_element.src = buffer_or_url;
+			audio_element.loop = true;
+			audio_element.play();
+
+		} else {
+			buffer_source = audio.createBufferSource();
+			buffer_source.buffer = buffer_or_url;
+			buffer_source.loop = true;
+			buffer_source.start(0, startTime);
+
+		}
 
 		buffer_source.connect(node_lowpass);
-		buffer_source.loop = true;
-		buffer_source.start(0, startTime);
 	}
 
 	//Helper for decodeFile -> changeTrack
@@ -75,7 +90,16 @@ function Audio() {
 	};
 
 	this.rate = {
-		get: () => { return (buffer_source) ? buffer_source.playbackRate.value : 1 },
-		set: (v) => { if(buffer_source) buffer_source.playbackRate.value = v; }
+		get: () => {
+			if(audio_element) return audio_element.playbackRate;
+			else if(buffer_source) return buffer_source.playbackRate.value;
+			else return 1;
+		},
+		set: (v) => {
+			if(audio_element) {
+				if(v < 0.1) v = 0.1;
+				audio_element.playbackRate = v;
+			} else if(buffer_source) return buffer_source.playbackRate.value = v;
+		}
 	};
 }

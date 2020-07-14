@@ -50,19 +50,29 @@ async function loadCustomCassette() {
 	input_elem.onchange = async () => {
 		await preloadCassette("Loading");
 
-		const reader = new FileReader();
-		reader.addEventListener("load", async (event) => {
+		if(input_elem.files[0].size > 5 * 1024*1024) { //to mb
+			console.warn("Given big file, getting URL instead of decoding");
 			try {
-				await loadCassetteFinish("Custom", "[CUSTOM]", event.target.result);
+				await loadCassetteFinish(input_elem.files[0].name, URL.createObjectURL(input_elem.files[0]));
 			} catch(e) {
 				console.error(e);
 				buttonEject();
 			}
-		});
-		reader.addEventListener("progress", async (event) => {
-			elements.messages.percent.innerText = `${Math.trunc(event.loaded/event.total*95)}%`;
-		});
-		reader.readAsArrayBuffer(input_elem.files[0]);
+		} else {
+			const reader = new FileReader();
+			reader.addEventListener("progress", async (event) => {
+				elements.messages.percent.innerText = `${Math.trunc(event.loaded/event.total*95)}%`;
+			});
+			reader.addEventListener("load", async (event) => {
+				try {
+					await loadCassetteFinish(input_elem.files[0].name, "[CUSTOM]", event.target.result);
+				} catch(e) {
+					console.error(e);
+					buttonEject();
+				}
+			});
+			reader.readAsArrayBuffer(input_elem.files[0]);
+		}
 	};
 	input_elem.click();
 }
@@ -112,32 +122,40 @@ async function loadCassette(title, url) {
 }
 
 async function loadCassetteFinish(title, url, file_contents) {
-	const decodes = {
-		"metadata": setCassetteAssets( (new OggParser(file_contents)).getMetadata() ),
-		"audio": audio.decodeFile(file_contents)
-	};
+	let metadata = {};
 
-	elements.messages.description.innerText = "Parsing Metadata";
-	const metadata = await decodes["metadata"];
-	elements.messages.percent.innerText = "98%";
+	if(file_contents) {
+		const decodes = {
+			"metadata": setCassetteAssets( (new OggParser(file_contents)).getMetadata() ),
+			"audio": audio.decodeFile(file_contents)
+		};
 
-	if(Object.keys(metadata).length) {
-		(async () => {
-			let info = `==== Metadata ====\n${getAbsoluteURL(url)}:\n`;
-			if(metadata.TITLE) info +=  `- Title:  ${metadata.TITLE}\n`;
-			if(metadata.ARTIST) info += `- Artist: ${metadata.ARTIST}\n`;
-			if(metadata.ALBUM) info +=  `- Album:  ${metadata.ALBUM}\n`;
-			if(metadata.SOURCE) info += `- Source: ${metadata.SOURCE}\n`;
-			console.log(info);
-		})();
+		elements.messages.description.innerText = "Parsing Metadata";
+		metadata = await decodes["metadata"];
+		elements.messages.percent.innerText = "98%";
+
+		if(Object.keys(metadata).length) {
+			(async () => {
+				let info = `==== Metadata ====\n${getAbsoluteURL(url)}:\n`;
+				if(metadata.TITLE) info +=  `- Title:  ${metadata.TITLE}\n`;
+				if(metadata.ARTIST) info += `- Artist: ${metadata.ARTIST}\n`;
+				if(metadata.ALBUM) info +=  `- Album:  ${metadata.ALBUM}\n`;
+				if(metadata.SOURCE) info += `- Source: ${metadata.SOURCE}\n`;
+				console.log(info);
+			})();
+		}
+
+		elements.messages.description.innerText = "Parsing Audiobuffer";
+		const audio_buffer = await decodes["audio"];
+		audio.changeTrack(audio_buffer);
+
+	} else {
+		setCassetteAssets({});
+		audio.changeTrack(url);
 	}
-
-	elements.messages.description.innerText = "Parsing Audiobuffer";
-	const audio_buffer = await decodes["audio"];
 
 	elements.messages.parent.style.display = "";
 	elements.playing_container.style.opacity = "1.0"; //opacity and not display, so that the images can preload a bit
-	audio.changeTrack(audio_buffer);
 
 	await buttonVolume(default_volume);
 	document.getElementById("volume").value = default_volume;
