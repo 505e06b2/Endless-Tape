@@ -80,10 +80,10 @@ function Audio() {
 		return buffer; //for possible later use
 	};
 
-	this.suspend = async () => {await audio.suspend();};
-	this.resume = async () => {await audio.resume();};
+	this.suspend = async () => await audio.suspend();
+	this.resume = async () => await audio.resume();
 
-	this.state = () => {return audio.state;};
+	this.state = () => audio.state;
 
 	this.gain = {
 		get: () => { return node_gain.gain.value; },

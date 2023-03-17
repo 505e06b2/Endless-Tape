@@ -136,7 +136,7 @@ async function loadCassetteFinish(title, url, file_contents) {
 
 		if(Object.keys(metadata).length) {
 			(async () => {
-				let info = `==== Metadata ====\n${getAbsoluteURL(url)}:\n`;
+				let info = `==== Metadata ====\n${getAbsoluteURL(url)}\n`;
 				if(metadata.TITLE) info +=  `- Title:  ${metadata.TITLE}\n`;
 				if(metadata.ARTIST) info += `- Artist: ${metadata.ARTIST}\n`;
 				if(metadata.ALBUM) info +=  `- Album:  ${metadata.ALBUM}\n`;
