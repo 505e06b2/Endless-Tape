@@ -9,8 +9,6 @@ input[type=range] {
 }
 
 input[type=range]::-webkit-slider-runnable-track {
-	margin-right: 5%;
-	margin-left: 5%;
 	height: 10%;
 	background: #666;
 }
@@ -25,8 +23,6 @@ input[type=range]::-webkit-slider-thumb {
 
 input[type=range]::-moz-range-track {
 	appearance: none;
-	margin-right: 5%;
-	margin-left: 5%;
 	height: 10%;
 	background: #666;
 }
