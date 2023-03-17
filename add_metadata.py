@@ -1,65 +1,73 @@
 #!/usr/bin/env python3
 
-import sys, subprocess, base64, mimetypes, os
+import sys, subprocess, base64, mimetypes
+from pathlib import Path
 import urllib.parse
 
-if len(sys.argv) < 4:
-	print("3 arguments required")
-	print("%s [ogg file] [bg_image] [label_image]" % sys.argv[0])
-	sys.exit(1)
+meta_file = Path("/tmp/metadata.txt").resolve()
 
-meta_file = "/tmp/metadata.txt"
+def optimiseSVG(filename):
+	try:
+		process = subprocess.run([
+			"scour",
+			filename,
+			"--enable-viewboxing",
+			"--enable-id-stripping",
+			"--enable-comment-stripping",
+			"--shorten-ids",
+			"--indent=none",
+			"--no-line-breaks",
+			"--strip-xml-prolog",
+			"-q"
+		], check=True, stdout=subprocess.PIPE)
 
-def optimizeSVG(filename):
-	return urllib.parse.quote(subprocess.check_output([
-		"scour",
-		filename,
-		"--enable-viewboxing",
-		"--enable-id-stripping",
-		"--enable-comment-stripping",
-		"--shorten-ids",
-		"--indent=none",
-		"--no-line-breaks",
-		"--strip-xml-prolog",
-		"-q"
-	]).decode("utf8").strip().replace("\"", "'"), safe="/ =:'")
+	except FileNotFoundError:
+		print("To optimise SVGs, you must install \"scour\": sudo apt install scour", file=sys.stderr)
+		sys.exit(1)
+
+	stdout = process.stdout.decode("utf8").strip().replace("\"", "'")
+	return urllib.parse.quote(stdout, safe="/ =:'")
 
 def getTagContents(filename):
 	mime = mimetypes.guess_type(filename)[0]
 	if not mime:
-		print("Can't get mimetype for \"%s\"" % filename)
+		print(f"Can't get mimetype for \"{filename}\"", file=sys.stderr)
 		sys.exit(1)
 
 	if mime == "image/svg+xml":
-		return "data:%s;utf8,%s" % (mime, optimizeSVG(filename))
+		return f"data:{mime};utf8,{optimiseSVG(filename)}"
 
-	return "data:%s;base64,%s" % (mime, base64.b64encode( open(filename, "rb").read() ).decode("utf8"))
+	with open(filename, "rb") as f:
+		encoded_bytes = base64.b64encode(f.read()).decode("utf8")
+		return f"data:{mime};base64,{encoded_bytes}"
 
-with open(meta_file, "w") as f:
-	#f.write(";FFMETADATA1\n")
-	f.write("CASSETTE_BG=%s\n" % getTagContents(sys.argv[2]))
-	f.write("CASSETTE_LABEL=%s\n" % getTagContents(sys.argv[3]))
+if __name__ == "__main__":
+	import argparse
 
-out_filename = "%s_cassette.ogg" % ( os.path.splitext(os.path.basename(sys.argv[1]))[0] )
+	parser = argparse.ArgumentParser()
+	parser.add_argument("ogg_file", type=Path)
+	parser.add_argument("bg_image", type=Path)
+	parser.add_argument("label_image", type=Path)
+	arguments = parser.parse_args()
 
-subprocess.call([
-	"vorbiscomment",
-	"-a",
-	"-R",
-	"-c", meta_file,
-	sys.argv[1],
-	out_filename
-])
+	with open(meta_file, "w") as f:
+		f.write(f"CASSETTE_BG={getTagContents(arguments.bg_image.resolve())}\n")
+		f.write(f"CASSETTE_LABEL={getTagContents(arguments.label_image.resolve())}\n")
 
-"""
-subprocess.call([
-	"ffmpeg",
-		"-hide_banner",
-		"-loglevel", "panic",
-		"-i", sys.argv[1],
-		"-i", meta_file,
-		"-c:a", "copy",
-		"-map_metadata", "1",
-		out_filename
-])
-"""
+	out_filename = Path(arguments.ogg_file.parent.resolve(), f"{arguments.ogg_file.stem}_cassette.ogg")
+
+	try:
+		subprocess.run([
+			"vorbiscomment",
+			"-a",
+			"-R",
+			"-c", meta_file,
+			arguments.ogg_file.resolve(),
+			out_filename
+		], check=True)
+
+	except FileNotFoundError:
+		print("To write ogg file metadata, you must install \"vorbiscomment\": sudo apt install vorbis-tools", file=sys.stderr)
+		sys.exit(1)
+
+	print(f"Written audio file to \"{out_filename}\"")
