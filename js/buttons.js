@@ -1,3 +1,5 @@
+"use strict";
+
 let speedup_interval = null;
 
 function _increaseRate(current_rate, end_rate) {
@@ -18,7 +20,7 @@ function _increaseRate(current_rate, end_rate) {
 	}
 
 	rateChange(); //do it before resume at least once
-	speedup_interval = setInterval(rateChange, 0);
+	speedup_interval = setInterval(rateChange, 1);
 }
 
 async function buttonPlay() {
@@ -27,17 +29,15 @@ async function buttonPlay() {
 
 	button_classes.add("pressed");
 	cassette.style.animationPlayState = "running";
-	media_session.play();
 
 	_increaseRate(0.0, 1.0);
-	await noise.resume();
+	if(noise) await noise.play();
 	await audio.resume();
-	media_session.s
 }
 
 async function buttonStop() {
 	await audio.suspend();
-	await noise.suspend();
+	if(noise) noise.pause();
 	cassette.style.animationPlayState = "paused";
 
 	if(speedup_interval) {
@@ -46,7 +46,6 @@ async function buttonStop() {
 	}
 
 	document.getElementById("button_play").classList.remove("pressed");
-	media_session.pause();
 	audio.rate.set(1.0);
 }
 
@@ -62,9 +61,9 @@ async function buttonPlaySpeed(amount) {
 }
 
 async function buttonVolume(value) {
-	const vol = parseInt(value) / 100 ;
+	const vol = value / 100;
 	audio.gain.set(vol);
-	noise.gain.set(vol);
+	if(noise) noise.volume = Math.min(vol, 1.0);
 }
 
 async function buttonEject() {

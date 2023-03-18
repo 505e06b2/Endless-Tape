@@ -1,8 +1,9 @@
+"use strict";
 
 const audio_folder = "audio";
 const default_volume = 30; //percent
-const audio = new Audio();
-const noise = new Audio();
+const audio = new CassetteAudio();
+let noise = new Audio();
 const media_session = new MediaSessionHandler();
 
 const elements = {
@@ -176,12 +177,14 @@ window.onload = async () => {
 		"description": document.getElementById("description")
 	};
 
-	try {
-		noise.load(await (await fetch("assets/noise.ogg")).arrayBuffer());
-		console.warn(`Don't like the white noise? Block requests to ${getAbsoluteURL("assets/noise.ogg")}`);
-	} catch(e) {
+	noise.oncanplay = () => console.warn(`Don't like the white noise? Block requests to ${getAbsoluteURL("assets/noise.ogg")}`);
+	noise.onerror = () => {
 		console.warn("White noise not loaded");
+		noise = null;
 	}
+	noise.src = "assets/noise.ogg";
+	noise.loop = true;
+	noise.preservesPitch = false;
 
 	shelf.style.opacity = "1.0";
 
