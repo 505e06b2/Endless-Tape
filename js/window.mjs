@@ -1,10 +1,10 @@
-"use strict";
+import CassetteAudio from "./cassette_audio.mjs";
+import MediaSessionHandler from "./media_session_handler.mjs";
+import OggParser from "./parse_ogg.mjs";
 
-const audio_folder = "audio";
+import * as Buttons from "./buttons.mjs"
+
 const default_volume = 30; //percent
-const audio = new CassetteAudio();
-let noise = new Audio();
-const media_session = new MediaSessionHandler();
 
 const elements = {
 	shelf: null,
@@ -20,7 +20,11 @@ function getAbsoluteURL(url) {
 	return a.href;
 }
 
-async function setCassetteAssets(metadata) {
+window.cassetteVisible = function() {
+	return (elements.container.style.display !== "none" && elements.playing_container.style.opacity === "1");
+}
+
+window.setCassetteAssets = async function(metadata) {
 	function checkTag(tag_contents) {
 		return (tag_contents && typeof(tag_contents) === "string" && tag_contents.length > 16);
 	}
@@ -33,7 +37,7 @@ async function setCassetteAssets(metadata) {
 	return metadata;
 }
 
-async function preloadCassette(text) {
+window.preloadCassette = async function(text) {
 	elements.playing_container.style.opacity = "0.0";
 	elements.shelf.style.opacity = "0.0";
 	elements.shelf.style.display = "none";
@@ -44,7 +48,7 @@ async function preloadCassette(text) {
 	elements.messages.parent.style.display = "flex";
 }
 
-async function loadCustomCassette() {
+window.loadCustomCassette = async function() {
 	const input_elem = document.createElement("input");
 	input_elem.type = "file";
 	input_elem.accept = ".wav,.mp3,.ogg,.webm,.flac,.opus,.vorbis";
@@ -78,13 +82,12 @@ async function loadCustomCassette() {
 	input_elem.click();
 }
 
-async function loadCassette(title, url) {
+window.loadCassette = async function(title, url) {
 	await preloadCassette("Downloading");
 
 	const file_contents = await (async () => {
 		const r = await fetch(url);
 		const content_length = r.headers.get("Content-Length");
-
 
 		if(content_length) {
 			const chunks = [];
@@ -122,13 +125,13 @@ async function loadCassette(title, url) {
 	}
 }
 
-async function loadCassetteFinish(title, url, file_contents) {
+window.loadCassetteFinish = async function(title, url, file_contents) {
 	let metadata = {};
 
 	if(file_contents) {
 		const decodes = {
 			"metadata": setCassetteAssets( (new OggParser(file_contents)).getMetadata() ),
-			"audio": audio.decodeFile(file_contents)
+			"audio": CassetteAudio.decodeFile(file_contents)
 		};
 
 		elements.messages.description.innerText = "Parsing Metadata";
@@ -148,11 +151,11 @@ async function loadCassetteFinish(title, url, file_contents) {
 
 		elements.messages.description.innerText = "Parsing Audiobuffer";
 		const audio_buffer = await decodes["audio"];
-		audio.changeTrack(audio_buffer);
+		CassetteAudio.changeTrack(audio_buffer);
 
 	} else {
 		setCassetteAssets({});
-		audio.changeTrack(url);
+		CassetteAudio.changeTrack(url);
 	}
 
 	elements.messages.parent.style.display = "";
@@ -162,7 +165,14 @@ async function loadCassetteFinish(title, url, file_contents) {
 	document.getElementById("volume").value = default_volume;
 	await buttonPlay();
 
-	media_session.add(title, metadata);
+	MediaSessionHandler.add(title, metadata);
+}
+
+window.closeCassette = function() {
+	elements.container.style.display = "none";
+	elements.shelf.style.display = "";
+	elements.shelf.style.opacity = "0.0";
+	setTimeout(() => {elements.shelf.style.opacity = "1.0";}, 20);
 }
 
 window.onload = async () => {
@@ -176,15 +186,6 @@ window.onload = async () => {
 		"percent": document.getElementById("percent"),
 		"description": document.getElementById("description")
 	};
-
-	noise.oncanplay = () => console.warn(`Don't like the white noise? Block requests to ${getAbsoluteURL("assets/noise.ogg")}`);
-	noise.onerror = () => {
-		console.warn("White noise not loaded");
-		noise = null;
-	}
-	noise.src = "assets/noise.ogg";
-	noise.loop = true;
-	noise.preservesPitch = false;
 
 	shelf.style.opacity = "1.0";
 

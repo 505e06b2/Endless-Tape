@@ -1,4 +1,6 @@
-"use strict";
+import CassetteAudio from "./cassette_audio.mjs";
+import Noise from "./noise.mjs";
+import MediaSessionHandler from "./media_session_handler.mjs";
 
 let speedup_interval = null;
 
@@ -6,13 +8,13 @@ function _increaseRate(current_rate, end_rate) {
 	const step = 0.01 * ((current_rate > end_rate) ? -1 : 1);
 
 	const cleanUp = () => {
-		audio.rate.set(end_rate);
+		CassetteAudio.rate.set(end_rate);
 		clearInterval(speedup_interval);
 		speedup_interval = null;
 	}
 
 	const rateChange = () => {
-		audio.rate.set(current_rate);
+		CassetteAudio.rate.set(current_rate);
 
 		current_rate += step;
 		if(step > 0 && current_rate >= end_rate) cleanUp();
@@ -23,7 +25,7 @@ function _increaseRate(current_rate, end_rate) {
 	speedup_interval = setInterval(rateChange, 1);
 }
 
-async function buttonPlay() {
+window.buttonPlay = async function() {
 	const button_classes = document.getElementById("button_play").classList;
 	if(button_classes.contains("pressed")) return;
 
@@ -31,13 +33,13 @@ async function buttonPlay() {
 	cassette.style.animationPlayState = "running";
 
 	_increaseRate(0.0, 1.0);
-	if(noise) await noise.play();
-	await audio.resume();
+	await Noise.play();
+	await CassetteAudio.resume();
 }
 
-async function buttonStop() {
-	await audio.suspend();
-	if(noise) noise.pause();
+window.buttonStop = async function() {
+	await CassetteAudio.suspend();
+	Noise.pause();
 	cassette.style.animationPlayState = "paused";
 
 	if(speedup_interval) {
@@ -46,30 +48,28 @@ async function buttonStop() {
 	}
 
 	document.getElementById("button_play").classList.remove("pressed");
-	audio.rate.set(1.0);
+	CassetteAudio.rate.set(1.0);
 }
 
-async function buttonPlaySpeed(amount) {
-	if(audio.state() !== "running" || speedup_interval) return;
+window.buttonPlaySpeed = async function(amount) {
+	if(CassetteAudio.state() !== "running" || speedup_interval) return;
 
-	let requested = (audio.rate.get() + amount).toFixed(1);
+	let requested = (CassetteAudio.rate.get() + amount).toFixed(1);
 	if(requested < 0.5) requested = 0.5;
 	else if(requested > 1.5) requested = 1.5;
 
-	_increaseRate(audio.rate.get(), requested);
+	_increaseRate(CassetteAudio.rate.get(), requested);
 	//cassette.style.animationDuration = `${default_animation_time/requested}s`; //Jutters really bad - not used anymore at all
 }
 
-async function buttonVolume(value) {
+window.buttonVolume = async function(value) {
 	const vol = value / 100;
-	audio.gain.set(vol);
-	if(noise) noise.volume = Math.min(vol, 1.0);
+	CassetteAudio.gain.set(vol);
+	Noise.volume.set(vol);
 }
 
-async function buttonEject() {
+window.buttonEject = async function() {
 	await buttonStop();
-	media_session.remove();
-	elements.container.style.display = "none";
-	elements.shelf.style.display = "";
-	setTimeout(() => {elements.shelf.style.opacity = "1.0";}, 0); //so the opacity transitions
+	MediaSessionHandler.remove();
+	closeCassette();
 }

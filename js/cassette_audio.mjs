@@ -1,6 +1,4 @@
-"use strict";
-
-function CassetteAudio() {
+function _CassetteAudio() {
 	const audio = new AudioContext();
 
 	const node_gain = audio.createGain();
@@ -111,3 +109,5 @@ function CassetteAudio() {
 		}
 	};
 }
+
+export default new _CassetteAudio();

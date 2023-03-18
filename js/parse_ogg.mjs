@@ -1,5 +1,3 @@
-"use strict";
-
 function OggParser(file) {
 	const uint8 = new Uint8Array(file);
 
@@ -126,3 +124,5 @@ function OggParser(file) {
 		return ret;
 	};
 }
+
+export default OggParser;
