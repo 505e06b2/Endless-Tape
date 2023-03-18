@@ -46,7 +46,7 @@ async function preloadCassette(text) {
 async function loadCustomCassette() {
 	const input_elem = document.createElement("input");
 	input_elem.type = "file";
-	input_elem.accept = ".wav,.mp3,.ogg,.webm,.flac";
+	input_elem.accept = ".wav,.mp3,.ogg,.webm,.flac,.opus,.vorbis";
 	input_elem.onchange = async () => {
 		await preloadCassette("Loading");
 
