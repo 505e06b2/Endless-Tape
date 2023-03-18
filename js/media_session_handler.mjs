@@ -1,3 +1,5 @@
+import Buttons from "./buttons.mjs";
+
 function _MediaSessionHandler() {
 	const _mediaSession = navigator.mediaSession;
 
@@ -17,11 +19,11 @@ function _MediaSessionHandler() {
 			_mediaSession.metadata = new MediaMetadata(media_metadata);
 			_mediaSession.setPositionState({duration: 0});
 
-			_mediaSession.setActionHandler("play",         () => { if(cassetteVisible()) buttonPlay() });
-			_mediaSession.setActionHandler("pause",        () => { if(cassetteVisible()) buttonStop() });
-			_mediaSession.setActionHandler("stop",         () => { if(cassetteVisible()) buttonStop() });
-			_mediaSession.setActionHandler("seekforward",  () => { if(cassetteVisible()) buttonPlaySpeed(+0.1) });
-			_mediaSession.setActionHandler("seekbackward", () => { if(cassetteVisible()) buttonPlaySpeed(-0.1) });
+			_mediaSession.setActionHandler("play",         () => { if(cassetteVisible()) Buttons.Play() });
+			_mediaSession.setActionHandler("pause",        () => { if(cassetteVisible()) Buttons.Stop() });
+			_mediaSession.setActionHandler("stop",         () => { if(cassetteVisible()) Buttons.Stop() });
+			_mediaSession.setActionHandler("seekforward",  () => { if(cassetteVisible()) Buttons.PlaySpeed(+0.1) });
+			_mediaSession.setActionHandler("seekbackward", () => { if(cassetteVisible()) Buttons.PlaySpeed(-0.1) });
 		}
 	}
 

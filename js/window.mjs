@@ -2,7 +2,7 @@ import CassetteAudio from "./cassette_audio.mjs";
 import MediaSessionHandler from "./media_session_handler.mjs";
 import OggParser from "./parse_ogg.mjs";
 
-import * as Buttons from "./buttons.mjs"
+import Buttons from "./buttons.mjs"
 
 const default_volume = 30; //percent
 
@@ -61,7 +61,7 @@ window.loadCustomCassette = async function() {
 				await loadCassetteFinish(input_elem.files[0].name, URL.createObjectURL(input_elem.files[0]));
 			} catch(e) {
 				console.error(e);
-				buttonEject();
+				Buttons.Eject();
 			}
 		} else {
 			const reader = new FileReader();
@@ -73,7 +73,7 @@ window.loadCustomCassette = async function() {
 					await loadCassetteFinish(input_elem.files[0].name, "[CUSTOM]", event.target.result);
 				} catch(e) {
 					console.error(e);
-					buttonEject();
+					Buttons.Eject();
 				}
 			});
 			reader.readAsArrayBuffer(input_elem.files[0]);
@@ -121,7 +121,7 @@ window.loadCassette = async function(title, url) {
 		await loadCassetteFinish(title, url, file_contents);
 	} catch(e) {
 		console.error(e);
-		buttonEject();
+		Buttons.Eject();
 	}
 }
 
@@ -161,9 +161,9 @@ window.loadCassetteFinish = async function(title, url, file_contents) {
 	elements.messages.parent.style.display = "";
 	elements.playing_container.style.opacity = "1.0"; //opacity and not display, so that the images can preload a bit
 
-	await buttonVolume(default_volume);
+	await Buttons.Volume(default_volume);
 	document.getElementById("volume").value = default_volume;
-	await buttonPlay();
+	await Buttons.Play();
 
 	MediaSessionHandler.add(title, metadata);
 }
@@ -196,4 +196,6 @@ window.onload = async () => {
 			console.warn("Service worker was not loaded");
 		}
 	}
+
+	window.Buttons = Buttons;
 };

@@ -47,17 +47,17 @@
 			</div>
 			<div id="playing-container">
 				<div class="bar">
-					<div class="button small" onclick="buttonEject()"><img src="assets/icons/eject.svg"></div>
-					<div id="button_play" class="button" onmousedown="buttonPlay()"><img src="assets/icons/play.svg"></div>
-					<div class="button" onmousedown="buttonStop()"><img src="assets/icons/stop.svg"></div>
+					<div class="button small" onclick="Buttons.Eject()"><img src="assets/icons/eject.svg"></div>
+					<div id="button_play" class="button" onmousedown="Buttons.Play()"><img src="assets/icons/play.svg"></div>
+					<div class="button" onmousedown="Buttons.Stop()"><img src="assets/icons/stop.svg"></div>
 				</div>
 				<div id="cassette">
 					<div class="label"></div>
 				</div>
 				<div class="bar bottom">
-					<div class="big"><input id="volume" type="range" max="130" min="0" step="1" value="20" oninput="buttonVolume(this.value)"></div>
-					<div class="button small" onmousedown="buttonPlaySpeed(-0.1)"><img src="assets/icons/slow.svg"></div>
-					<div class="button small" onmousedown="buttonPlaySpeed(+0.1)"><img src="assets/icons/fast.svg"></div>
+					<div class="big"><input id="volume" type="range" max="130" min="0" step="1" value="20" oninput="Buttons.Volume(this.value)"></div>
+					<div class="button small" onmousedown="Buttons.PlaySpeed(-0.1)"><img src="assets/icons/slow.svg"></div>
+					<div class="button small" onmousedown="Buttons.PlaySpeed(+0.1)"><img src="assets/icons/fast.svg"></div>
 				</div>
 			</div>
 		</div>
