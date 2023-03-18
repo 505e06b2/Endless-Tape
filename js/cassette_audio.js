@@ -1,6 +1,6 @@
 "use strict";
 
-function Audio() {
+function CassetteAudio() {
 	const audio = new AudioContext();
 
 	const node_gain = audio.createGain();
@@ -37,24 +37,14 @@ function Audio() {
 		});
 	};
 
-	this.getCurrentTime = () => {
-		if(!buffer_source) return 0;
-		return audio.currentTime; //currentTime is the time from when the AudioContext was created
-	}
-
 	this.changeTrack = (buffer_or_url, startTime = 0) => {
-		if(buffer_source) {
-			buffer_source.disconnect();
-			if(buffer_source.mediaElement) URL.revokeObjectURL(buffer_source.mediaElement.src);
-		}
-		buffer_source = undefined;
-
+		this.eject();
 
 		if(typeof(buffer_or_url) === "string") {
 			buffer_source = audio.createMediaElementSource(document.createElement("audio"));
 			buffer_source.mediaElement.src = buffer_or_url;
 			buffer_source.mediaElement.loop = true;
-			buffer_source.mediaElement.preservesPitch = false; //no browser has implemented this
+			buffer_source.mediaElement.preservesPitch = false;
 			buffer_source.mediaElement.play();
 
 		} else {
@@ -79,6 +69,14 @@ function Audio() {
 
 		return buffer; //for possible later use
 	};
+
+	this.eject = () => {
+		if(buffer_source) {
+			buffer_source.disconnect();
+			if(buffer_source.mediaElement) URL.revokeObjectURL(buffer_source.mediaElement.src);
+		}
+		buffer_source = undefined;
+	}
 
 	this.suspend = async () => await audio.suspend();
 	this.resume = async () => await audio.resume();
